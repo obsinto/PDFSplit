@@ -1,12 +1,15 @@
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;// representa um documento PDF
-import org.apache.pdfbox.pdmodel.PDPage; // representa uma página individual 
-import org.apache.pdfbox.pdmodel.PDPageTree; //representa todas as páginas
 import org.apache.pdfbox.text.PDFTextStripper; //é usado para extrair o texto do documento PDF
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class SplitPDF {
     public static void main(String[] args) {
@@ -18,7 +21,9 @@ public class SplitPDF {
         if (result == JFileChooser.APPROVE_OPTION) {
 
             File selectedFile = fileChooser.getSelectedFile();
+
             String fileName = fileChooser.getName(selectedFile);
+
             JOptionPane.showMessageDialog(null, "Arquivo " + fileName + " Selecionado!");
 
             try {
@@ -31,7 +36,12 @@ public class SplitPDF {
 
                     String newName = "pagina + " + (pageIndex + 1) + ".pdf";
 
-                    newDocument.save(newName);
+                    File newDir = new File("Lote");
+                    newDir.mkdirs();
+
+                    File file = new File(newDir, newName);
+
+                    newDocument.save(file);
                     newDocument.close();
                 }
 
