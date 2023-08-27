@@ -29,9 +29,16 @@ public class SplitPDF {
             try {
                 PDDocument document = Loader.loadPDF(selectedFile);
 
-                File newDir = new File("Lote de Comprovantes");
-                newDir.mkdirs();
+                File baseDir = new File("Lote de Comprovantes");
+                baseDir.mkdirs();
 
+                int dirNumber = 1;
+                File newDir;
+                do {
+                    newDir = new File(baseDir, "Lote de Comprovantes" + dirNumber);
+                    dirNumber++;
+                } while (newDir.exists());
+                newDir.mkdirs();
                 for (int pageIndex = 0; pageIndex < document.getNumberOfPages(); pageIndex++) {
 
                     PDDocument newDocument = new PDDocument();
