@@ -29,6 +29,9 @@ public class SplitPDF {
             try {
                 PDDocument document = Loader.loadPDF(selectedFile);
 
+                File newDir = new File("Lote de Comprovantes");
+                newDir.mkdirs();
+
                 for (int pageIndex = 0; pageIndex < document.getNumberOfPages(); pageIndex++) {
 
                     PDDocument newDocument = new PDDocument();
@@ -36,11 +39,7 @@ public class SplitPDF {
 
                     String newName = "pagina + " + (pageIndex + 1) + ".pdf";
 
-                    File newDir = new File("Lote");
-                    newDir.mkdirs();
-
                     File file = new File(newDir, newName);
-
                     newDocument.save(file);
                     newDocument.close();
                 }
@@ -53,8 +52,8 @@ public class SplitPDF {
 
         } else if (result == JFileChooser.CANCEL_OPTION) {
 
-            fileChooser.setDialogTitle("Tomas Cuck");
             JOptionPane.showMessageDialog(null, "Seleção de PDF cancelada.");
         }
+
     }
 }
