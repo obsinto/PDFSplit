@@ -2,17 +2,16 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;// representa um documento PDF
 import org.apache.pdfbox.text.PDFTextStripper; //é usado para extrair o texto do documento PDF
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class SplitPDF {
     public static void main(String[] args) {
+        Logger.getLogger("org.apache").setLevel(Level.OFF);
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Selecione um arquivo PDF");
@@ -39,16 +38,41 @@ public class SplitPDF {
                     dirNumber++;
                 } while (newDir.exists());
                 newDir.mkdirs();
+
                 for (int pageIndex = 0; pageIndex < document.getNumberOfPages(); pageIndex++) {
 
                     PDDocument newDocument = new PDDocument();
                     newDocument.addPage(document.getPage(pageIndex));
 
-                    String newName = "pagina + " + (pageIndex + 1) + ".pdf";
+                    try {
+                        int lineCount = 0;
+                        PDFTextStripper stripper = new PDFTextStripper();
 
-                    File file = new File(newDir, newName);
-                    newDocument.save(file);
-                    newDocument.close();
+                        String pageText = stripper.getText(newDocument);
+
+                        String[] lines = pageText.split("\n");
+                        if (lines.length == 17) {
+                            String beneficiaryName = lines[12].substring(13).trim();
+                            String valueLine = lines[16].substring(40).trim();
+
+                            String newName = beneficiaryName + "_" + valueLine + "_" + pageIndex + ".pdf";
+
+                            File file = new File(newDir, newName);
+
+                            newDocument.save(file);
+                            newDocument.close();
+                        }
+                        for (String line : lines) {
+                            if (!line.isEmpty()) {
+                                lineCount++;
+                            }
+                        }
+                        System.out.println("Número de linhas na página: " + lineCount);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
 
                 document.close();
