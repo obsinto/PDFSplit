@@ -45,30 +45,57 @@ public class SplitPDF {
                     newDocument.addPage(document.getPage(pageIndex));
 
                     try {
-                        int lineCount = 0;
+
                         PDFTextStripper stripper = new PDFTextStripper();
 
                         String pageText = stripper.getText(newDocument);
 
                         String[] lines = pageText.split("\n");
-                        if (lines.length == 17) {
-                            String beneficiaryName = lines[12].substring(13).trim();
-                            String valueLine = lines[16].substring(40).trim();
 
-                            String newName = beneficiaryName + "_" + valueLine + "_" + pageIndex + ".pdf";
+                        if (pageIndex == 0) {
+                            String[] copyLines = new String[lines.length - 3];
+                            System.arraycopy(lines, 3, copyLines, 0, copyLines.length);
+                            lines = copyLines;
+                        }
+
+                        // if (lines.length == 17) {
+                        // String beneficiaryName = lines[12].substring(8, 20).trim();
+                        // String valueLine = lines[10].substring(40).trim();
+
+                        // String newName = beneficiaryName + "_" + valueLine + "_" + pageIndex +
+                        // ".pdf";
+
+                        // File file = new File(newDir, newName);
+
+                        // newDocument.save(file);
+                        // newDocument.close();
+                        // }
+
+                        if (lines.length == 23) {
+                            String beneficiaryName = lines[12].substring(10, 15).trim();
+                            String valueLine = lines[13].substring(40).trim();
+
+                            String newName = beneficiaryName + "_" + valueLine + "_" + pageIndex +
+                                    ".pdf";
 
                             File file = new File(newDir, newName);
 
                             newDocument.save(file);
                             newDocument.close();
+
                         }
+                        StringBuilder modifiedText = new StringBuilder();
+                        int lineCount = 0;
+
                         for (String line : lines) {
                             if (!line.isEmpty()) {
+                                modifiedText.append(lineCount + 1).append(".").append(line).append("\n");
                                 lineCount++;
                             }
                         }
-                        System.out.println("Número de linhas na página: " + lineCount);
 
+                        System.out.println("Número de linhas na página: " + lineCount);
+                        System.out.println(modifiedText);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
