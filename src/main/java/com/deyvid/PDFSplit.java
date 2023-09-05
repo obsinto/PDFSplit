@@ -4,6 +4,7 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;// representa um documento PDF
 import org.apache.pdfbox.text.PDFTextStripper; //é usado para extrair o texto do documento PDF
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.URISyntaxException;
@@ -30,7 +31,6 @@ public class PDFSplit {
             try {
                 PDDocument document = Loader.loadPDF(selectedFile);
 
-                // Path currentyPath = Paths.get("");
 
                 File jarFile = new File(PDFSplit.class.getProtectionDomain().getCodeSource().getLocation().toURI());
                 File jarDir = jarFile.getParentFile();
@@ -46,10 +46,12 @@ public class PDFSplit {
                 } while (newDir.exists());
                 newDir.mkdirs();
 
+                int totalPageCount = 0;
                 for (int pageIndex = 0; pageIndex < document.getNumberOfPages(); pageIndex++) {
 
                     PDDocument newDocument = new PDDocument();
                     newDocument.addPage(document.getPage(pageIndex));
+
 
                     try {
 
@@ -59,12 +61,24 @@ public class PDFSplit {
 
                         String[] lines = pageText.split("\n");
 
-                        if (pageIndex == 0) {
-                            String[] copyLines = new String[lines.length - 3];
-                            System.arraycopy(lines, 3, copyLines, 0, copyLines.length);
-                            lines = copyLines;
+//                        if (pageIndex == 0) {
+//                            String[] copyLines = new String[lines.length - 3];
+//                            System.arraycopy(lines, 3, copyLines, 0, copyLines.length);
+//                            lines = copyLines;
+//                        }
 
+                        if (pageIndex == 0) {
+                            lines = Arrays.copyOfRange(lines, 3, lines.length);
                         }
+
+//                        if(pageIndex == document.getNumberOfPages()){
+//                            lines = Arrays.copyOf(lines, lines.length -1);
+//                        }
+
+                        if (pageIndex == document.getNumberOfPages() - 1) {
+                            lines = Arrays.copyOfRange(lines, 0, lines.length - 1);
+                        }
+
 
                         if (lines.length == 23) {
                             String beneficiaryName = lines[15].substring(12, 26).trim();
@@ -92,6 +106,7 @@ public class PDFSplit {
                             newDocument.save(file);
                             newDocument.close();
                         }
+
 
                         if (lines.length == 16) {
                             String beneficiaryName = lines[6].substring(4, 14).trim();
@@ -141,15 +156,16 @@ public class PDFSplit {
                                 lineCount++;
                             }
                         }
-
+                        totalPageCount++;
                         System.out.println("Número de linhas na página: " + lineCount);
                         System.out.println(modifiedText);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
                 }
-
+                System.out.println("numero de paginas: " + totalPageCount);
                 document.close();
 
             } catch (IOException | URISyntaxException e) {
