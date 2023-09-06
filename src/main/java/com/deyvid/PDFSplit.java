@@ -3,6 +3,8 @@ package com.deyvid;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;// representa um documento PDF
 import org.apache.pdfbox.text.PDFTextStripper; //é usado para extrair o texto do documento PDF
+import org.apache.pdfbox.pdmodel.PDPage;
+
 
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -26,6 +28,7 @@ public class PDFSplit {
             File[] selectedFiles = fileChooser.getSelectedFiles();
 
             for (File selectedFile : selectedFiles) {
+
 
                 try {
                     PDDocument document = Loader.loadPDF(selectedFile);
@@ -59,20 +62,21 @@ public class PDFSplit {
 
                             String[] lines = pageText.split("\n");
 
-//                        if (pageIndex == 0) {
-//                            String[] copyLines = new String[lines.length - 3];
-//                            System.arraycopy(lines, 3, copyLines, 0, copyLines.length);
-//                            lines = copyLines;
-//                        }
+
+//                            if (pageIndex == 0) {
+//                                String[] copyLines = new String[lines.length - 3];
+//                                System.arraycopy(lines, 3, copyLines, 0, copyLines.length);
+//                                lines = copyLines;
+//                            }
 
                             if (pageIndex == 0) {
-                                lines = Arrays.copyOfRange(lines, 3, lines.length);
+                                lines = Arrays.copyOfRange(lines, 4, lines.length);
+                                System.out.println(Arrays.toString(lines));
                             }
 
 //                        if(pageIndex == document.getNumberOfPages()){
 //                            lines = Arrays.copyOf(lines, lines.length -1);
 //                        }
-
                             if (pageIndex == document.getNumberOfPages() - 1) {
                                 lines = Arrays.copyOfRange(lines, 0, lines.length - 1);
                             }
@@ -120,8 +124,8 @@ public class PDFSplit {
                             }
 
                             if (lines.length == 15) {
-                                String beneficiaryName = lines[5].substring(4, 14).trim();
-                                String valueLine = lines[8].substring(5).trim();
+                                String beneficiaryName = lines[6].substring(4, 14).trim();
+                                String valueLine = lines[9].substring(5).trim();
 
                                 String newName = beneficiaryName + "_" + valueLine + "_" + pageIndex +
                                         ".pdf";
@@ -144,7 +148,6 @@ public class PDFSplit {
                                 newDocument.close();
 
                             }
-
                             StringBuilder modifiedText = new StringBuilder();
                             int lineCount = 0;
 
@@ -157,6 +160,7 @@ public class PDFSplit {
                             totalPageCount++;
                             System.out.println("Número de linhas na página: " + lineCount);
                             System.out.println(modifiedText);
+                            //System.out.println(Arrays.toString(lines));
 
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -169,6 +173,7 @@ public class PDFSplit {
                 } catch (IOException | URISyntaxException e) {
                     e.printStackTrace();
                 }
+
             }
 
         } else if (result == JFileChooser.CANCEL_OPTION) {
