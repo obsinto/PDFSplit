@@ -60,15 +60,14 @@ public class PDFSplit {
 
                             if (pageIndex == 0) {
                                 lines = Arrays.copyOfRange(lines, 4, lines.length);
-                                System.out.println(Arrays.toString(lines));
                             }
 
                             // if(pageIndex == document.getNumberOfPages()){
                             // lines = Arrays.copyOf(lines, lines.length -1);
                             // }
-                            if (pageIndex == document.getNumberOfPages() - 1) {
-                                lines = Arrays.copyOfRange(lines, 0, lines.length - 1);
-                            }
+                            // if (pageIndex == document.getNumberOfPages() - 1) {
+                            // lines = Arrays.copyOfRange(lines, 0, lines.length - 1);
+                            // }
 
                             if (lines.length == 23) {
                                 String beneficiaryName = lines[15].substring(12, 26).trim();
@@ -135,6 +134,43 @@ public class PDFSplit {
                                 newDocument.close();
 
                             }
+                            if (lines.length == 21) {
+                                String beneficiaryName = lines[9].substring(16, 25).trim();
+                                String valueLine = lines[12].substring(5).trim();
+
+                                String newName = beneficiaryName + "_" + valueLine + "_" + pageIndex + ".pdf";
+
+                                File file = new File(newDir, newName);
+
+                                newDocument.save(file);
+                                newDocument.close();
+
+                            }
+                            if (lines.length == 19) {
+                                String beneficiaryName = lines[7].substring(16, 25).trim();
+                                String valueLine = lines[10].substring(5).trim();
+
+                                String newName = beneficiaryName + "_" + valueLine + "_" + pageIndex + ".pdf";
+
+                                File file = new File(newDir, newName);
+
+                                newDocument.save(file);
+                                newDocument.close();
+
+                            }
+                            // if (lines.length == 19) {
+                            // String beneficiaryName = lines[9].substring(16, 18).trim();
+                            // String valueLine = lines[12].substring(6).trim();
+
+                            // String newName = beneficiaryName + "_" + valueLine + "_" + pageIndex +
+                            // ".pdf";
+
+                            // File file = new File(newDir, newName);
+
+                            // newDocument.save(file);
+                            // newDocument.close();
+
+                            // }
                             StringBuilder modifiedText = new StringBuilder();
                             int lineCount = 0;
 
